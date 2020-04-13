@@ -1,0 +1,724 @@
+
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+
+
+
+html {
+ font-family: 'Open Sans', 'Arial', sans-serif;
+ font-size: 1.2em;
+ line-height: 1.6em;
+ background-color: black;
+ margin: 0px;
+ padding: 10px;
+ border: 0px;
+ text-align:center; 
+ 
+}
+
+h2{
+ /*color:#26a69a;*/
+ color: dodgerblue;
+ text-align:center;
+}
+
+
+
+p.h1{
+ color:dodgerblue;
+
+}
+
+
+.ident{
+margin-left:10%;
+	
+}
+
+.oculto{
+    display: none;
+}
+
+ #contenedor{
+     
+     
+	background: DodgerBlue;
+	position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+	text-align: center;	
+	height:640px;
+	width: 950px;
+	border-radius: 2%;
+	
+}
+
+
+#divContenido{
+	
+	background-color: #FFFFFF;
+	position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+	border-radius: 2%;
+	text-align: center;	
+	height:95%;
+	width: 97%;
+}
+
+#divTitle{
+	padding:2%;
+	height: 18%;
+	display:none;
+	/*text-indent: 1.5em;*/
+}
+
+#divTextos{
+	padding:7%;
+	display:block;
+	max-height: 70%;
+	display:none;
+	text-align:left;
+    overflow-y: auto;
+    font-size:0.9em;
+	/*text-indent: 1.5em;*/
+}
+
+#marcadorSuperior{
+    height: 50px;
+    text-align: center;
+    font-size: 30;
+    padding: 20px 0px 0px 0px;
+    vertical-align: middle;
+    margin: auto;
+}
+
+#divBotoneraJuego{
+    background: #cce6ff;
+    height: 150px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    vertical-align: middle;
+}
+
+.Cuestionario{    
+	border-width: 0px;
+    background-color: #cce6ff;
+    font-size: 100%;
+    padding: 1%;
+	}
+
+#divBoton {
+    width: 100%;
+    position: absolute;
+    bottom: 50;
+}
+
+.btnScreens {
+  min-width: 120px;
+  margin: 1%;
+
+  -moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #4197ee) );
+  background:-moz-linear-gradient( center top, #79bbff 5%, #4197ee 100% );
+  /*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#4197ee');*/
+  background-color:#79bbff;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #469df5;
+  display:inline-block;
+  color:#ffffff;
+  font-family:arial;
+  font-size:15px;
+  font-weight:bold;
+  padding:4px 24px;
+  text-decoration:none;
+  text-shadow:1px 5px 0px #287ace;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.btnScreens:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #4197ee), color-stop(1, #79bbff) );
+  background:-moz-linear-gradient( center top, #4197ee 5%, #79bbff 100% );
+  /*filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#4197ee', endColorstr='#79bbff');*/
+  background-color:#4197ee;
+}
+
+.btnScreens:active {
+  position:relative;
+  top:1px;
+}
+
+.column {
+    width: 33.3333%;
+    height: 100%;
+    float: left;
+}
+
+.column2 {
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+
+#divNoDisparos{
+    display: none;
+    border-radius: 20px;
+    background-color: lightblue;
+    padding: 5%;
+    font-size: 1em;
+    line-height: 1.2em;
+    height:500px;
+	width: 800px;
+    z-index: 10;
+	position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    
+    box-shadow: 5px 5px 5px #888888;
+    
+}
+
+#divRondaScreen{
+    display: none;
+    bottom: 50%;
+    left: 25%;
+    text-align: center;
+    position: absolute;
+    font-size: 5em;
+        -webkit-animation: muestraRonda 2s ease-in;
+    animation: muestraRonda 2s ease-in;
+}
+
+@keyframes muestraRonda {
+    0% {transform: scale(0);}
+    100% {transform: scale(1);}
+    
+}
+
+
+
+/*++++++++++++++++++++++++++++++++++++++
+/* 			  CARAMELOS VOLADORES
++++++++++++++++++++++++++++++++++++++++*/
+
+
+.idle{
+    opacity: 1;
+    bottom:25%;
+    position:absolute; 
+}
+
+
+.movil_idle{
+    opacity: 1;
+    bottom:25%;
+    position:absolute;
+    -webkit-animation:linear infinite alternate;
+    -webkit-animation-name: run;
+    -webkit-animation-duration: 5s;
+}    
+
+@-webkit-keyframes run {
+    0% { left: 0;}
+    50%{ left : 55%;}
+    100%{ left: 0;}
+}
+    
+
+.fijo_idle{
+    opacity: 1;
+    bottom:25%;
+    left: 25%;
+    position:absolute; 
+}
+
+
+/* animacion para cuando aciertas*/
+
+.hit{ 
+    
+    bottom:25%;
+    left:25%; 
+    position:absolute;
+/*    animation: shake 0.5s;*/
+
+    -webkit-animation:linear;
+    -webkit-animation-name: stop-and-sink;
+    -webkit-animation-duration: 1s;
+
+    
+    
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+  
+
+@keyframes stop-and-sink{
+    0% { left: 25%; transform: scale(1); }
+    100% {transform: scale(0);}
+    
+}
+
+.explode{
+    display: none;
+    bottom:25%;
+    left:25%;
+    opacity: 0;
+    position:absolute;
+    z-index: 4;
+    -webkit-animation: explosion 1s linear;
+    animation: explosion 1s linear;
+    
+    
+}
+
+@keyframes explosion {
+    0% {opacity: 0; transform: scale(0);}
+    80% {opacity: 1; transform: scale(1);}
+    100% {opacity: 0}
+    
+}
+
+/*  ECHAR UN VISTAZO A: https://www.inserthtml.com/2013/08/exploding-blocks-css-and-javascript/*/
+
+.pointsUp{
+    display: none;
+    text-align: center;
+    opacity: 0;
+    color: darkgreen;
+    font-size: 40;
+    font-weight: bolder;
+    left: 0%;
+    z-index: 5;
+    position: relative;
+    bottom: 50px;
+    -webkit-animation: moveUp 2s linear;
+    animation: moveUp 2s linear;   
+}
+
+@keyframes moveUp {
+    from{transform: translateY(200px); opacity: 1;}
+    to{transform: translateY(50px); opacity: 0;}
+    
+}
+
+.missedText{
+    display: none;
+    text-align: center;
+    opacity: 0;
+    color: darkred;
+    font-size: 100;
+    font-weight: bolder;
+    left: 0%;
+    z-index: 5;
+    position: relative;
+    bottom: -150px;
+    -webkit-animation: explosion 1s linear;
+    animation: explosion 1s linear;
+
+}
+
+
+/*  HACER UNA CLASE PARA EL CARAMELO EN EL ITI: QUE DESAPREZCA (OPACITY) */ 
+
+.classITI{
+    -webkit-animation: fadeout 0.5s linear;
+    animation: fadeout 0.5s linear; 
+}
+
+@keyframes fadeout {
+    from{opacity: 1;}
+    to{opacity: 0;}
+}
+
+
+/* AnimaciÃ³n para los textos del marcador, cuando se actualizan*/
+.UpdateStats {
+    animation: grow 1s linear;
+}
+
+@keyframes grow {
+    0% {transform: scale(1); font-weight: bolder;}
+    50% {transform: scale(1.5);}
+    100% {transform: scale(1); font-weight: normal;}
+}
+
+
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++
+/* 					JUICIO
++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+
+
+
+/*input[type=text] {
+ 	font-family: 'Open Sans', 'Arial', sans-serif;
+	font-size: 1em;
+	line-height: 1.6em;
+	border: none;
+	width:6%; 
+	
+	font-family: 'Open Sans', 'Arial', sans-serif;
+  font-size: 1em;
+  line-height: 1.6em;
+  border: none;
+  width: 9%;
+  BACKGROUND-COLOR: TRANSPARENT;
+}
+*/
+
+
+/*++++++++++++++++++++++++++++++++++++++
+/* 			  BOTONES
++++++++++++++++++++++++++++++++++++++++*/
+
+
+
+.button {
+    /*background-color: dodgerblue; */
+    color: white;
+    padding: 0.3% 3%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4% 0%;
+    -webkit-transition-duration: 0.3s; /* Safari */
+    transition-duration: 0.3s;
+    cursor: pointer;
+    width:50%;
+    height: 70%;
+    font-size: 35;
+    
+    border-radius: 50px;
+    outline: none;
+    border-color: transparent;
+    
+}
+
+.button:hover{
+    transform: scale(1.10);
+    box-shadow: 0 10px 12px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.buttonDeudas{
+    color: white;
+    background-color: dodgerblue;
+    text-align: center;
+    display: inline-block;
+    
+    -webkit-transition-duration: 0.3s; /* Safari */
+    transition-duration: 0.3s;
+    
+    cursor: pointer;
+    width:180px;
+    height: 80px;
+    font-size: 100%;
+    border-radius: 50px;
+    outline: none;
+    border-color: transparent;
+    float: none;
+}
+
+.buttonDeudas:hover{
+    transform: scale(1.10);
+    box-shadow: 0 10px 12px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    
+}
+
+.buttonDeudasclicked{
+    background-color: darkred;
+}
+
+
+#botonDispara{
+    background-color: FireBrick;
+}
+
+#botonOmitir{
+/*   background-color: LightSlateGray; */
+    background-color: lightskyblue;
+}
+
+#botonDispara:disabled{
+    background-color: lightslategray;
+    cursor: not-allowed;
+}
+
+#botonOmitir:disabled{
+    background-color: lightslategray;
+    cursor: not-allowed;
+}
+
+.button1 {
+	background-color: #26a69a;
+	color: white;
+	position:absolute;
+	top: 50%;
+	left: 34%;
+}
+
+.button1:hover {
+     box-shadow: 0 12px 10px 0 rgba(0,0,0,0.24), 0 10px 45px 0 rgba(0,0,0,0.19);
+}
+
+.button2 {
+	background-color: #26a69a;
+	color: white;
+	position:absolute;
+	top: 58%;
+	left: 34%;
+}
+.button2:hover {
+     box-shadow: 0 12px 10px 0 rgba(0,0,0,0.24), 0 10px 45px 0 rgba(0,0,0,0.19);
+}
+
+
+.BotonTarea{
+    height: 8%;
+    position: absolute;
+    top: 80%;
+    z-index: 3;
+}
+.Next{
+    left: 89%;
+}
+.Next:active {
+  transform: translateX(4px);
+}
+.Back:active {
+  transform: translateX(-4px);
+}
+.Back{
+	
+    left: 4%;
+  	display:block;
+}
+
+/************************************
+              SLIDER
+************************************/
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #0897eb;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #0897eb;
+  cursor: pointer;
+}
+
+/*++++++++++++++++++++++++++++++++++++++
+/* 			  SPINNER
++++++++++++++++++++++++++++++++++++++++*/
+
+#SpinnerBox{
+    background: red; 
+    position: absolute;
+    left: 15%;
+    top:40%;
+    width:25%;
+}
+
+.lds-spinner {
+
+    position: absolute;
+    width: 25%;
+    height: 25%;
+    left: 125%;
+    top:67%;
+}
+.lds-spinner div {
+    transform-origin: 32px 32px;
+    animation: lds-spinner 1.2s linear infinite;
+}
+.lds-spinner div:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 29px;
+  width: 5px;
+  height: 14px;
+  border-radius: 20%;
+  background: #26a69a;
+}
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+@keyframes lds-spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/*++++++++++++++++++++++++++++++++++++++
+/*    ESTILO PARA LOS RADIO BUTTONS
++++++++++++++++++++++++++++++++++++++++*/
+
+
+.containerRadios{
+    
+    position: absolute;
+    left:25%;
+    padding-left: 5%;
+    cursor: pointer;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+}
+
+/* Hide the browser's default radio button */
+.containerRadios input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.containerRadios:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.containerRadios input:checked ~ .checkmark {
+  background-color:  #23d5cf;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.containerRadios input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.containerRadios .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}

@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>x183a</title>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script type="text/javascript" src="scripts/script.js"></script>
+
+        <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyBt5GMrFE9j65zW2SZmw5tQU8nGI0zpnmk",
+                authDomain: "proyectoted-52b31.firebaseapp.com",
+                databaseURL: "https://proyectoted-52b31.firebaseio.com",
+                projectId: "proyectoted-52b31",
+                storageBucket: "",
+                messagingSenderId: "707161695927"
+            };
+            firebase.initializeApp(config);
+        </script>
+
+    </head>
+
+    <body onload="arranca()">
+
+        <div id="contenedor">
+
+            <div id="divContenido">
+
+                <div id="divTitle"></div>
+                <div id="divTextos"></div>
+                <div id="divRondaScreen"></div>
+
+                <div id="divContenidoJuego">
+                    <div id="divNoDisparos">
+                        <!--<h2>ATENCIÓN:</h2>
+                        <p>No te quedan más disparos.</p>
+                        Puntos en esta ronda: PuntosRonda
+                        Puntos totales: PuntosTotal
+                        ¿Te quieres endeudar?-->
+                    </div>
+
+                    <div id="marcadorSuperior">
+                        <div id="divRonda" class="column"></div>
+                        <div id="divPuntos" class="column"></div>
+                        <div id="divDisparos" class="column">
+                        <!--5x <img src="img/Disparo.png" width="30px">-->
+                        </div>
+                    </div>
+                    <div id="divZonaJuego">
+                        <div id="targetCandy"></div>
+                        <div id="explosionHit" class="explode"><img src="img/explosion.png" width="200px"></div>
+                        <div id="pointsHit" class="pointsUp">+1</div>
+                        <div id="textoFallo" class="missedText">¡FALLO!</div>
+                    </div>
+                    <div id="divBotoneraJuego">
+                        <div id="botonJuegoIzda" class="column2">
+                            <button id="botonDispara" class="button" onclick="shotTrial()" disabled="true">
+                                Disparar
+                            </button>
+                        </div>
+                        <div id="botonJuegoDcha" class="column2">
+                            <button id="botonOmitir" class="button" onclick="skipTrial()" disabled="true">
+                                Omitir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="divBoton"></div>
+            </div>
+        </div>
+    </body>
+</html>
