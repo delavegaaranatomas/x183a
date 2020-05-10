@@ -21,12 +21,10 @@ var preloadImages = "img/candy01.png,img/candy02.png,img/Disparo.png,img/explosi
 var tempIMG = [];
 
 function preloadIMG() {
-
     for (var i = 0; i < preloadImages.length; i++) {
         tempIMG[i] = new Image();
         tempIMG[i].src = preloadImages[i];
     }
-
 }
 
 
@@ -68,14 +66,17 @@ var Group = 99;
 var GroupName = "";         //guarda el nombre del grupo (más cómodo)
 
 var state = 0;               //contador ensayo
-var disparosLeft = 99;        //contador de disparos disponibles
-var PrecioDisparo = 1;      //por defecto, cada disparo vale un disparo. (puede aumentar si pides un crédito)
+var disparosLeft = 0;        //contador de disparos disponibles por ronda
+var precioDisparo = 1;      //por defecto, cada disparo vale un disparo. (puede aumentar si pides un crédito)
 var ronda = 0;              //contador de ronda
-var PuntosRonda = 0;
+var rondas = 10;             // Número de rondas totales. Recordar ponerlo a 10.
+var puntosRonda = 0;
 var PuntosTotal = 0;
+var prestamosTotales = 0;   // Número de prestamos totales disponibles.
 
-var DisparosRico = 15;      //número de disparos de cada grupo
-var DisparosPobre = 3;
+var disparosRico = 15;      //número de disparos de cada grupo
+var disparosPobre = 3;
+var disparosDisponibles = 0;    // Número de disparos disponibles para el juego. 
 
 var button1 = document.getElementById("botonDispara");
 var button2 = document.getElementById("botonOmitir");
@@ -106,7 +107,7 @@ var imagenMovil = "";
 var slider;
 var sliderValue = 0;
 
-var Instrucciones;
+var instrucciones;
 
 var estimulos = shuffle(["candy01.png", "candy02.png"]);
 
@@ -130,13 +131,13 @@ class Trial {
 //++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++
 //
-//      INSTRUCCIONES
+//      instrucciones
 //
 //++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++
 
-function cargarInstrucciones() {
-    Instrucciones = {
+function cargarinstrucciones() {
+    instrucciones = {
         Compatibilidad: "<h2><p align=\"center\">ATTENTION</h2><p><p align=\"center\">This experiment is designed to function on a <b>personal computer</b>, not on a mobile device (tablet, smartphone), and it is <b>only compatible with an updated version of Google Chrome or Mozilla Firefox browsers</b>. If you have tried to access with another browser, please try again using Google Chrome or Mozilla Firefox.<p align=\"center\"><img src=\"img/Chrome.png\" style=\"padding:3%\"width=\"93\"><img src=\"img/Firefox.png\" width=\"100\" style=\"padding:3%\"><p align=\"center\"> When you are ready, click on the arrow to begin the experiment",
     
         Incompatible: "<p align=\"center\">Sorry but this study is designed to run on a desktop computer, not on a mobile device (tablet, smartphone), and it is only compatible with an updated version of Google Chrome or Mozilla Firefox.<p align=\"center\"> <b> Please, try again using an updated version of Google Chrome or Mozilla Firefox on a desktop computer.",
@@ -178,75 +179,61 @@ function cargarInstrucciones() {
 //++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++
 
-
-
-
 function arranca() {
 
     TimeInicioTarea = Date.now();
-
     preloadIMG();
-
-    Group = Math.floor((Math.random() * 4) + 1);    //Elige grupo al azar: de 1 a 4.
-    asignaGroup();                                  //hace los cambios según el grupo.
-    //asignaEstimulo();               //siempre hay que asignar estímulo antes de generar los ensayos!
-
-    //antes de cambiaRonda(), hay que mostrar instrucciones:
-    showInstruc();
-    //cambiaRonda();
+    Group = Math.floor((Math.random() * 4) + 1);    // Elige grupo al azar: de 1 a 4.
+    asignaGroup();                                  // Función que aplica cambios según el grupo.
+    showInstruc();                                  // Mostrar instrucciones.
 }
 
 function asignaGroup() {
     switch (Group) {
         case 1: //RICO-Sin deudas
-            disparosLeft = DisparosRico;
+            disparosLeft = disparosRico;
             allowCredit = 0;
             GroupName = "Rico-SinDeuda";
+            disparosDisponibles = disparosRico * rondas;
             break;
         case 2: //POBRE-Sin deudas
-            disparosLeft = DisparosPobre;
+            disparosLeft = disparosPobre;
             allowCredit = 0;
             GroupName = "Pobre-SinDeuda";
+            disparosDisponibles = disparosPobre * rondas;
             break;
         case 3: //RICO-Con deudas
-            disparosLeft = DisparosRico;
+            disparosLeft = disparosRico;
             allowCredit = 1;
             GroupName = "Rico-Deuda";
+            disparosDisponibles = disparosRico * rondas;
+            prestamosTotales = Math.round(disparosDisponibles / 2);
             break;
         case 4: //POBRE-Con deudas
-            disparosLeft = DisparosPobre;
+            disparosLeft = disparosPobre;
             allowCredit = 1;
             GroupName = "Pobre-Deuda";
+            disparosDisponibles = disparosPobre * rondas;
+            prestamosTotales = Math.round(disparosDisponibles / 2);
     }
 
-    // cargarInstrucciones
-    cargarInstrucciones(); 
+    // cargarinstrucciones
+    cargarinstrucciones(); 
 
     if (allowCredit == 1) {
-        Instrucciones.PantallaCredito = "¡¡Has tenido suerte!! El banco sí te permite endeudarte. Podrás pedir préstamos mientras juegas. Aunque termines tu presupuesto de disparos, podrás seguir jugando.";
+        instrucciones.PantallaCredito = "¡¡Has tenido suerte!! El banco sí te permite endeudarte. Podrás pedir préstamos mientras juegas. Aunque termines tu presupuesto de disparos, podrás seguir jugando.";
     }
     else {
-        Instrucciones.PantallaCredito = "¡¡Qué pena!! El banco no te permite endeudarte. No podrás pedir préstamos mientras juegas. Cuando termines tu presupuesto de disparos, se terminará también la ronda.";
+        instrucciones.PantallaCredito = "¡¡Qué pena!! El banco no te permite endeudarte. No podrás pedir préstamos mientras juegas. Cuando termines tu presupuesto de disparos, se terminará también la ronda.";
     }
 
 
 }
 
-//asigna las imágenes a los estímulos aleatoriamente:
-// function asignaEstimulo() {
-//     var estimulos = ["candy01.png", "candy02.png"]; //< -- si queremos que sean el mismo estímulo para todos los ensayos, modificarlo aquí!
-
-//     estimulos = shuffle(estimulos);
-
-//     trialFijo.imagen = "<img src=\"img/" + estimulos[0] + "\" width=\"400px\" class= \"fijo_idle\">";
-//     trialMovil.imagen = "<img src=\"img/" + estimulos[1] + "\" width=\"400px\" class= \"movil_idle\">";
-// }
-
-
 function CheckBrowser() {
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         ocultar(Next);
-        htmlContenido = Instrucciones.Incompatible;
+        htmlContenido = instrucciones.Incompatible;
         pintarHTML("divTextos", htmlContenido);
         mostrar(divTextos);
     }
@@ -255,7 +242,7 @@ function CheckBrowser() {
     }
     else {
         ocultar(Next);
-        htmlContenido = Instrucciones.Incompatible;
+        htmlContenido = instrucciones.Incompatible;
         pintarHTML("divTextos", htmlContenido);
         mostrar(divTextos);
     }
@@ -320,48 +307,48 @@ function showInstruc() {
 
 
 function consentimiento() {
-    pintarHTML("divTextos", Instrucciones.Consentimiento);
+    pintarHTML("divTextos", instrucciones.Consentimiento);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='sociodemografProlific()'>Empezar</button>");
     mostrar(divTextos);
 }
 
 function sociodemografProlific() {
-    pintarHTML("divTextos", Instrucciones.SociodemografProlific);
+    pintarHTML("divTextos", instrucciones.SociodemografProlific);
     pintarHTML("divBoton","<button class='btnScreens' onclick='checkForm();'>Continuar</button>")
     mostrar(divTextos);
 }
 
 function pantalla1() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.Pantalla1);
+    pintarHTML("divTextos", instrucciones.Pantalla1);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='pantalla2();'>Continuar</button>");
     mostrar(divTextos);
 }
 
 function pantalla2() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.Pantalla2);
+    pintarHTML("divTextos", instrucciones.Pantalla2);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='pantalla1();'>Atrás</button><button class='btnScreens' onclick='pantalla3();'>Continuar</button>");
     mostrar(divTextos);
 }
 
 function pantalla3() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.Pantalla3);
+    pintarHTML("divTextos", instrucciones.Pantalla3);
     pintarHTML("divBoton","<button class='btnScreens' onclick='pantalla2();'>Atrás</button><button class='btnScreens' onclick='pantalla4();'>Continuar</button>");
     mostrar(divTextos);
 }
 
 function pantalla4() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.Pantalla4);
+    pintarHTML("divTextos", instrucciones.Pantalla4);
     pintarHTML("divBoton","<button class='btnScreens' onclick='pantalla3();'>Atrás</button><button class='btnScreens' onclick='pantallaCredito();'>Continuar</button>");
     mostrar(divTextos);
 }
 
 function pantallaCredito() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.PantallaCredito);
+    pintarHTML("divTextos", instrucciones.PantallaCredito);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='cambiaRonda()'>Empezar</button>");
     //pintarHTML("divBoton", "<button class='btnScreens' onclick='pantallaValoracion();'>Empezar</button>");
     mostrar(divTextos);
@@ -369,7 +356,7 @@ function pantallaCredito() {
 
 function pantallaValoracion() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.PantallaValoracion);
+    pintarHTML("divTextos", instrucciones.PantallaValoracion);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='checkSliderValue(output.innerHTML);'>Continuar</button>");
     mostrar(divTextos);
     document.getElementById("myRangeTest").addEventListener("click", changeDisplay);
@@ -377,7 +364,7 @@ function pantallaValoracion() {
 
 function pantallaEnviarDatos() {
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.PantallaEnviarDatos);
+    pintarHTML("divTextos", instrucciones.PantallaEnviarDatos);
     pintarHTML("divBoton","<button class='btnScreens' onclick='pantallaFinal(0)'>Cancelar</button><button class='btnScreens' onclick='pantallaFinal(1);'>Enviar</button>");
     mostrar(divTextos);
 }
@@ -386,7 +373,7 @@ function pantallaFinal(save) {
     if(save === 1)
         saveData();
     ocultar(divTextos);
-    pintarHTML("divTextos", Instrucciones.PantallaFinal);
+    pintarHTML("divTextos", instrucciones.PantallaFinal);
     pintarHTML("divBoton","<button class='btnScreens' onclick='closeWindow();'>Salir</button>");
     mostrar(divTextos);
 }
@@ -415,47 +402,17 @@ function changeDisplay() {
     initSlider(clickValue);
 }
 
-//++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++
-//
-//      TAREA DE DISPAROS
-//
-//++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++
-
-
-
-//====================================
-//VARIABLES PARA LA RECOGIDA DE DATOS
-//====================================
-
-
-
-
-//=========================================
-//        Preparo info del entrenamiento
-//=========================================
-
-//PENSAR OTRA OPCIÓN: EN VEZ DEL ARRAY DE JSONS, TENER ARRAYS SEPARADOS PARA CADA PROPIEDAD, LUEGO GENERAR EL JSON EN CADA ENSAYO
-
-
-
-
-
-
-
 
 //=========================================
 //     mecánica del juego
 //=========================================
 
-//función para inciar una ronda:
 function cambiaRonda() {
     ocultar(divTextos);
     ocultar(divBoton);
     ocultar(divContenidoJuego);
 
-    if (ronda == 3) {
+    if (ronda == rondas || disparosDisponibles === 0) {
         finJuego();
     } else {
         roundTrialsData.push(new Array());
@@ -466,22 +423,22 @@ function cambiaRonda() {
         }
         arrayTrials = shuffle(arrayTrials);
 
-        state = 0; //resetea el contador de ensayos
-        PuntosRonda = 0; // resetea los puntos de la ronda.
-        PrecioDisparo = 1; //al iniciar la ronda, el precio es el normal.
-        ronda++; //suma una ronda: si es la primera, pasa de 0 a 1.
+        state = 0;                  //resetea el contador de ensayos
+        puntosRonda = 0;            // resetea los puntos de la ronda.
+        precioDisparo = 1;          //al iniciar la ronda, el precio es el normal.
+        ronda++;                    //suma una ronda: si es la primera, pasa de 0 a 1.
         switch (Group) {
             case 1: //RICO-Sin deudas
-                disparosLeft = ronda === 1 ? DisparosRico : DisparosRico + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosRico : disparosRico + disparosLeft;
                 break;
             case 2: //POBRE-Sin deudas
-                disparosLeft = ronda === 1 ? DisparosPobre : DisparosPobre + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosPobre : disparosPobre + disparosLeft;
                 break;
             case 3: //RICO-Con deudas
-                disparosLeft = ronda === 1 ? DisparosRico : DisparosRico + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosRico : (disparosDisponibles > disparosLeft && disparosDisponibles > disparosRico) ? disparosRico + disparosLeft : disparosDisponibles;
                 break;
             case 4: //POBRE-Con deudas
-                disparosLeft = ronda === 1 ? DisparosPobre : DisparosPobre + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosPobre : (disparosDisponibles > disparosLeft && disparosDisponibles > disparosPobre)? disparosPobre + disparosLeft : disparosDisponibles;
         }
 
         pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
@@ -497,23 +454,12 @@ function cambiaRonda() {
 //Esta función me devuelve la lista de tipos de ensayo, los números de respuesta de cada ensayo... para guardarlos
 
 function contarTrials() {
-
     for (var i = 0; i < arrayTrials.length; i++) {
         seqTrials.push(arrayTrials[i].name);
         seqExplos.push(arrayTrials[i].exploded);
         seqResps.push(arrayTrials[i].responses);
     }
-
-
-    //ME HACE FALTA ACTUALIZARLA Y QUE HAGA TODO LO QUE NECESITO
-    //Y luego llamrla al final de cada ronda!
-    //return seqTipos;
-
-
-    //POR ALGUN MOTIVO, LA SEQRESPS SOLO CONTIENE CEROS!!!!
 }
-
-
 //función para activar/desactivar los botones:
 function toggleButtons() {
     var button1 = document.getElementById("botonDispara");
@@ -536,7 +482,7 @@ function startTrial() {
 
 
     pintarHTML("divRonda", "RONDA: " + ronda);
-    pintarHTML("divPuntos", "Puntos total: " + PuntosRonda);
+    pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
     pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
 
     button1 = document.getElementById("botonDispara");
@@ -558,8 +504,6 @@ function startTrial() {
 
     mostrar(targetCandy);
 
-    //arrayTrials[state].responses = 0;
-    //responses = 0;
 }
 
 //función que describe qué pasa cuando disparas. 
@@ -570,29 +514,32 @@ function shotTrial() {
     else
         disparosBlancosArriesgados++;
     
-    if(PrecioDisparo === 2)
+    if(precioDisparo === 1) {
+        disparosLeft = disparosLeft - precioDisparo;    //te descuento un disparo.
+    } else { // precioDisparo = 2
         prestamosSolicitados++;
-    
-    disparosLeft = disparosLeft - PrecioDisparo; //te descuento un disparo.
+    }    
+
+    disparosDisponibles = disparosDisponibles - precioDisparo;
 
     var target = document.getElementById("targetCandy");
 
-    //tengo que programarlo para que no les deje pulsar el botón mientras. De momento, anulo el botón mientras explota o no...
+    // Anular el botón mientras explota o no...
     button1.disabled = true;
     button2.disabled = true;
 
-    arrayTrials[state].responses++; // se incrementa en uno el número de respuestas.
+    arrayTrials[state].responses++;                                 // se incrementa en uno el número de respuestas.
 
     if (arrayTrials[state].chancesHit.pop() == 1) {                 //Acierto
         arrayTrials[state].exploded = 1;                            //guarda que en este ensayo ha habido explosión.
-        roundTrialsData[ronda-1].push(arrayTrials[state]);            //añadir ensayo al array de datos.
+        roundTrialsData[ronda-1].push(arrayTrials[state]);          //añadir ensayo al array de datos.
         seqResps2.push(arrayTrials[state].responses);
 
         target.classList.add("hit");                                //animaciones y señales extra en la explosion...
         mostrar(explosionHit);
         mostrar(pointsHit);
 
-        PuntosRonda++;          //sumamos los puntos y avanzamos el ensayo
+        puntosRonda++;          //sumamos los puntos y avanzamos el ensayo
         PuntosTotal++;
         state++;                //se incrementa el índice
 
@@ -601,7 +548,7 @@ function shotTrial() {
         //setTimeout("puntos.classList.add('UpdateStats')", 500);
 
         pintarHTML("divRonda", "RONDA: " + ronda);
-        pintarHTML("divPuntos", "Puntos total: " + PuntosRonda);
+        pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
         pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
 
         setTimeout('CheckParams()', 2000);
@@ -622,7 +569,7 @@ function skipTrial() {
     ocultar(targetCandy);
 
     pintarHTML("divRonda", "RONDA: " + ronda);
-    pintarHTML("divPuntos", "Puntos total: " + PuntosRonda);
+    pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
     pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
 
     seqResps2.push(arrayTrials[state].responses); // guardar el valor en el array
@@ -632,81 +579,69 @@ function skipTrial() {
     setTimeout('CheckParams()', 1000);
 }
 
-
 function CheckParams() {
 
-    //actualizamos marcadores:
-
+    // Actualizar marcadores.
     var puntos = document.getElementById("divPuntos");
     puntos.classList.remove('UpdateStats');
-    //    pintarHTML("divRonda", "RONDA: "+ronda);
-    //    pintarHTML("divPuntos", "Puntos total: "+PuntosRonda);
-    //    pintarHTML("divDisparos", disparosLeft+"x <img src=\"img/Disparo.png\" width=\"30px\">");
 
     //reinicia el caramelo... (le quita las clases de hit y de ITI...)
     var target = document.getElementById("targetCandy");
     target.classList.remove("hit");
     target.classList.remove("classITI");
-    //target.classList.remove(".fijo_idle");
-    //target.classList.remove(".movil_idle");
 
-    //reinicia botones...
+    // Reiniciar botones...
     button1.disabled = false;
     button2.disabled = false;
 
-
-
-    if (state == arrayTrials.length) {  //si se acaban los ensayos...
-        //manda a la funcion de cambiar ronda: primero va a comprobar en qué ronda estamos, y luego la actualiza en consecuencia
+    if(disparosDisponibles <= 0) { // Fin del juego. Mostrar pantalla fin ronda y fin juego.
+        disparosDisponibles = 0;
         contarTrials();
-        cambiaRonda();
-    } else { //si aun quedan ensayos...
-        if (disparosLeft <= 0) {               //si no te quedan más disparos...
-            //saca la pantalla de endeudamiento.
-
-            if (PrecioDisparo == 2) { //si estamos endeudados:
-                contarTrials();
-                cambiaRonda();
-            } else decideTexto();
-        } else {
-            if(PuntosRonda === 7) {
-                PuntosTotal = PuntosTotal + 3;
-                contarTrials();
-                cambiaRonda();
-            } else startTrial();
-        } 
+        decideTexto(0);
+        //finJuego();
+    } else if(state == arrayTrials.length) { // Se han acabado los ensayos. Mostrar pantalla fin ronda y fin juego si se se está en la última ronda.
+        contarTrials();
+        decideTexto(0);
+    } else if(puntosRonda === 7) { // Se han acertado con los siete objetivos. Mostrar pantalla fin ronda y fin juego si se se está en la última ronda. 
+        // Se dan 3 puntos extra.
+        puntosRonda = 10;
+        PuntosTotal = PuntosTotal + 3;
+        contarTrials();
+        decideTexto(0);
+    } else if (disparosLeft == 0 && precioDisparo === 1) { // No nos quedan más disparos.
+        if(allowCredit == 0) { // No permite endeudamiento.  Mostrar pantalla fin ronda y fin juego si se se está en la última ronda.
+            contarTrials();
+            decideTexto(0);
+        } else if(allowCredit == 1) { // Permite endeudamiento. El usuario decide si quiere endeudarse.
+            contarTrials();
+            decideTexto(1);
+        }
+    } else { // Siguiente ensayo.
+        startTrial();
     }
 }
 
 function finJuego() {
     ocultar(divContenidoJuego);
-    Instrucciones.Final = "<h2>Puntuaciones finales</h2><p>Enhorabuena, tu puntuación final es de " + PuntosTotal + " puntos.</p>";
-    //var htmlcontenido = "<button class = 'column2' onclick='saveData()'>Enviar datos</button><button class = 'column2' onclick='pantallaFinal()'>Cancelar</button>";
+    instrucciones.Final = "<h2>Puntuaciones finales</h2><p>Puntuación total juego: " + PuntosTotal + " puntos.</p><p>Ratio de acierto: " + Math.round(((PuntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 100) / 100 + "</p><p>Disparos sobrantes: " + disparosDisponibles + "</p>";
 
-    pintarHTML("divTextos", Instrucciones.Final);
+    pintarHTML("divTextos", instrucciones.Final);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='pantallaValoracion();'>Empezar</button>");
 
     mostrar(divTextos);
     mostrar(divBoton);
 }
 
-function decideTexto() {
-    if (allowCredit == 0) //si son los grupos sin deuda:
-    {
-        var htmltexto = "<h2>ATENCIÓN</h2><p>No te quedan más disparos.</p><img src=\"img/noShotsLeft.png\" width=\"120px\"><p>Tu puntuación en esta ronda es de: <b>" + PuntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p> <button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=\"false\">Continuar</button>";
-
+function decideTexto(value) {
+    if(value === 0) { // caso en el que has conseguido los 7 objetivos o se han acabado los ensayos de la ronda o se te han agotado los disparos totales.
+        var htmltexto = "<h2>Tus resultados en la ronda" + ronda +"</h2><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p><p>Número de disparos acumulados para la siguiente ronda: " + disparosLeft + "</p> <button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=\"false\">Continuar</button>";
         pintarHTML("divNoDisparos", htmltexto);
         document.getElementById("botonSiguienteRonda").disabled = false;
-
-
-    }
-    else { //en los grupos Con posibilidad de deuda:
-        var htmltexto = "<h2>ATENCIÓN</h2><p>No te quedan más disparos.</p><img src=\"img/noShotsLeft.png\" width=\"120px\"><p>Tu puntuación en esta ronda es de: <b>" + PuntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p> <p>Tienes la posibilidad de <b>pedir un crédito</b> para seguir jugando esta ronda. Si pides el crédito, tendrás más posibilidades de disparar, pero cada disparo que hagas te descontará dos balas.</p><div class = \"column2\"><button id=\"botonEndeudarse\" class=\"buttonDeudas\" onclick=\"deuda()\"  disabled=false>Endeudarme</button></div><div class = \"column2\"><button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=false>No endeudarme</button></div>";
-
+    } else { // caso en el que se te han acabado los disparos de la ronda y puedes endeudarte.
+        var htmltexto = "<h2>ATENCIÓN</h2><p>No te quedan más disparos.</p><img src=\"img/noShotsLeft.png\" width=\"120px\"><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p> <p>Tienes la posibilidad de <b>pedir un crédito</b> para seguir jugando esta ronda. Si pides el crédito, tendrás más posibilidades de disparar, pero cada disparo que hagas te descontará dos balas.</p><div class = \"column2\"><button id=\"botonEndeudarse\" class=\"buttonDeudas\" onclick=\"deuda()\"  disabled=false>Endeudarme</button></div><div class = \"column2\"><button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=false>No endeudarme</button></div>";
         pintarHTML("divNoDisparos", htmltexto);
         document.getElementById("botonEndeudarse").disabled = false;
         document.getElementById("botonSiguienteRonda").disabled = false;
-
     }
     mostrar(divNoDisparos);
 }
@@ -717,9 +652,9 @@ function deuda() {
     document.getElementById("botonEndeudarse").disabled = true;//desactiva los botones
     document.getElementById("botonSiguienteRonda").disabled = true;
 
-    PrecioDisparo = 2;
+    precioDisparo = 2;
 
-    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición.</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
+    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición. Actualmente dispones de " + Math.round(disparosDisponibles / 2) + "</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
 
     setTimeout("pintarHTML('divNoDisparos', '')", 500);
     setTimeout("pintarHTML('divNoDisparos', htmlContenido)", 1000);
@@ -748,27 +683,56 @@ function saveData() {
     data = {
         "Grupo" : Group,
         "Escasez" : (Group == 1 || Group == 3) ? "No" : "Sí",
-        "Préstamos" : (allowCredit == 0) ? "No" : "Sí",
-        "Num disparos disponible" : "",
+        "Prestamos" : (allowCredit == 0) ? "No" : "Sí",
+        "NumDisparosDisponible" : disparosDisponibles,
         "Fecha" : Fecha,
-        "Género" : Gender,
+        "Genero" : Gender,
         "Edad" : Age,
-        "ID participante" : personId,
-        "Num total puntos" : PuntosTotal,
-        "Num total disparos a blancos seguros" : disparosBlancosSeguros,
-        "Num total disparos a blancos arriesgados" : disparosBlancosArriesgados,
-        "Num total préstamos solicitados" : prestamosSolicitados,
-        "Estrategia ahorro" : roundWithoutShots(),
-        "Valoración recurso" : sliderValue,
-        "Num total disparos realizados" : disparosBlancosArriesgados + disparosBlancosSeguros,
-        "Ratio puntuación" : (Group == 1 || Group == 3) ? (PuntosTotal/100) : (PuntosTotal/42),
-        "Ratio acierto" : (PuntosTotal /(disparosBlancosArriesgados+disparosBlancosSeguros)),
-        "Estrategia-ratio seguridad" : (disparosBlancosSeguros/(disparosBlancosArriesgados+disparosBlancosSeguros)),
-        "Ratio endeudamiento" : ""
+        "IdParticipante" : personId,
+        "NumTotalPuntos" : PuntosTotal,
+        "NumTotalDisparosBlancosSeguros" : disparosBlancosSeguros,
+        "NumTotalDisparosBlancosArriesgados" : disparosBlancosArriesgados,
+        "NumTotalPrestamosSolicitados" : prestamosSolicitados,
+        "EstrategiaAhorro" : roundWithoutShots(),
+        "ValoracionRecurso" : sliderValue,
+        "NumTotalDisparosRealizados" : disparosBlancosArriesgados + disparosBlancosSeguros,
+        "RatioPuntuación" : (Group == 1 || Group == 3) ? (PuntosTotal/100) : (PuntosTotal/42),
+        "RatioAcierto" : Math.round(((PuntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 100) / 100,
+        "EstrategiaRatioSeguridad" : Math.round(((disparosBlancosSeguros/(disparosBlancosArriesgados+disparosBlancosSeguros)) + Number.EPSILON) * 100) /100,
+        "RatioEndeudamiento" : Math.round(((prestamosSolicitados / prestamosTotales) + Number.EPSILON) * 100) /100
     };
-    //implementar la llamada a firebase falta
-    alert(data);
+    dataToSend = experimentCode + "," + data.Grupo + "," + data.Escasez + "," + data.Prestamos + "," + data.NumDisparosDisponible + "," + data.Fecha + "," + data.Genero + "," + data.Edad +
+                "," + data.IdParticipante + "," + data.NumTotalPuntos + "," + data.NumTotalDisparosBlancosSeguros + "," + data.NumTotalDisparosBlancosArriesgados + "," + data.NumTotalPrestamosSolicitados +
+                "," + data.EstrategiaAhorro + "," + data.ValoracionRecurso + "," + data.NumTotalDisparosRealizados + "," + data.RatioPuntuación + "," + data.RatioAcierto + "," + data.EstrategiaRatioSeguridad +
+                "," + data.RatioEndeudamiento;
+    alert(JSON.stringify(data)); // Comentar la siguiente línea, ahora es para mostrar los datos de las pruebas.
+    sendFirebase(dataToSend);
 }
+
+/*Guardar en Firebase*/
+function sendFirebase(data) {
+    // Initialize Firebase, 
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDCb4NJ_FMkmCe_xtLj7X5r8YzZgmT58FE",
+        authDomain: "radiant-inferno-4675.firebaseapp.com",
+        databaseURL: "https://radiant-inferno-4675.firebaseio.com",
+        projectId: "radiant-inferno-4675",
+        storageBucket: "radiant-inferno-4675.appspot.com",
+        messagingSenderId: "1043729749642"
+    };
+    firebase.initializeApp(config);
+  
+    // Get a reference to the database service
+    var database = firebase.database();
+    var referencia=database.ref('x138a');
+  
+    referencia.push(
+    {
+       data: data
+    });
+  }
+
 function roundWithoutShots() {
     var roundWithoutShots = 0;
     var shots;
