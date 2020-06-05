@@ -43,9 +43,14 @@ function shuffle(array) {
 
 function stringDate() {
     var fecha = new (Date);
-    return (String(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + "/" + fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds()));
+    return (String(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear()));
+    //return (String(fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + "/" + fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds()));
 }
 
+function stringTime() {
+    var fecha = new (Date);
+    return (String( fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds()));
+}
 //++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++
 //
@@ -56,14 +61,15 @@ function stringDate() {
 
 
 
-var Fecha = stringDate();         //fecha y hora...
+var fecha = stringDate();         //fecha y hora...
+var horaInicio = stringTime();
 var personId = Math.floor((Math.random() * 1000000) + 1); //ID aleatorio
 var data = "";                //aquí guardaremos los datos
 var experimentCode = "x183a";
-var Gender = "";
-var Age = "";
-var Group = 99;
-var GroupName = "";         //guarda el nombre del grupo (más cómodo)
+var gender = "";
+var age = "";
+var group = 99;
+var groupName = "";         //guarda el nombre del grupo (más cómodo)
 
 var state = 0;               //contador ensayo
 var disparosLeft = 0;        //contador de disparos disponibles por ronda
@@ -71,12 +77,14 @@ var precioDisparo = 1;      //por defecto, cada disparo vale un disparo. (puede 
 var ronda = 0;              //contador de ronda
 var rondas = 10;             // Número de rondas totales. Recordar ponerlo a 10.
 var puntosRonda = 0;
-var PuntosTotal = 0;
+var puntosTotal = 0;
 var prestamosTotales = 0;   // Número de prestamos totales disponibles.
 
 var disparosRico = 15;      //número de disparos de cada grupo
 var disparosPobre = 3;
 var disparosDisponibles = 0;    // Número de disparos disponibles para el juego. 
+var disparosTotales = 0;
+var prestamosMaximos = 0;
 
 var button1 = document.getElementById("botonDispara");
 var button2 = document.getElementById("botonOmitir");
@@ -100,8 +108,6 @@ var disparosBlancosArriesgados = 0;
 var prestamosSolicitados = 0;
 var rondasSinDisparos = 0;
 
-var imagenFijo = "";
-var imagenMovil = "";
 
 // variables para la valoración.
 var slider;
@@ -109,12 +115,10 @@ var sliderValue = 0;
 
 var instrucciones;
 
-var estimulos = shuffle(["candy01.png", "candy02.png"]);
-
 class Trial {
     constructor(name) {
         this.name = name;
-        this.imagen = name === "Fijo" ? "<img src=\"img/" + estimulos[0] + "\" width=\"400px\" class= \"fijo_idle\">": "<img src=\"img/" + estimulos[1] + "\" width=\"400px\" class= \"movil_idle\">";
+        this.imagen = name === "Fijo" ? "<img src=\"img/candy01.png\" width=\"400px\" class= \"fijo_idle\">": "<img src=\"img/candy02.png\" width=\"400px\" class= \"movil_idle\">";
         this.chancesHit = name === "Fijo" ? [1] : this.getChances();
         this.responses = 0;
         this.exploded = 0;
@@ -154,11 +158,11 @@ function cargarinstrucciones() {
     
         Pantalla3: "<h2>¿Cómo se juega?</h2><p>A lo largo de 10 rondas irán apareciendo de uno en uno, dos tipos de blancos distintos: Blancos fijos y blancos móviles.<br>Deberás decidir si disparas o si no disparas. Además, mientras tu prepuesto de disparos no se haya terminado, podrás disparar a un mismo blanco cuantas veces quieras. Ten en cuenta que los blancos fijos son mucho más fáciles de acertar que los blancos móviles.<br>Si en una ronda consigues alcanzar 7 blancos, automáticamente se te sumarán 3 puntos adicionales y finalizarás esa ronda con la puntuación máxima: 10 puntos.<br>A veces es posible pedir prestados disparos de rondas posteriores: Solo podrás pedir préstamos una vez has agotado tu presupuesto: En ese momento, se activará la función \“Pedir préstamos\” y tú decidirás si continúas jugando o si pasas a la siguiente ronda. Ten en cuenta que por cada disparo pedido en préstamo, se te descontarán 2 disparos de tu presupuesto total.</p>",
         
-        Pantalla4: "<h2>¿Cómo se juega?</h2><p>Tu presupuesto es de " + disparosLeft + " disparos por ronda.<br>Recuerda que tu objetivo es conseguir el mayor número posible de puntos.<br>Para ello, en primer lugar deberás consultar si en tu caso se ha autorizado o se ha denegado la capacidad de solicitar préstamos y a partir de ese momento podrás empezar a jugar.<br>¡Prueba tu suerte y mide tus habilidades<p>",
+        Pantalla4: "<h2>¿Cómo se juega?</h2><p>Tu presupuesto es de " + disparosLeft + " disparos por ronda.<br>Recuerda que tu objetivo es conseguir el mayor número posible de puntos.<br>Para ello, en primer lugar deberás consultar si en tu caso se ha autorizado o se ha denegado la capacidad de solicitar préstamos y a partir de ese momento podrás empezar a jugar.<br>¡Prueba tu suerte y mide tus habilidades!<p>",
     
         Pantalla5: "",
         
-        PantallaCredito: "",    //se asigna más tarde en la función asignaGroup
+        PantallaCredito: "",    //se asigna más tarde en la función asignagroup
     
         Final: "", //se asigna más tarde
     
@@ -183,40 +187,44 @@ function arranca() {
 
     TimeInicioTarea = Date.now();
     preloadIMG();
-    Group = Math.floor((Math.random() * 4) + 1);    // Elige grupo al azar: de 1 a 4.
-    asignaGroup();                                  // Función que aplica cambios según el grupo.
+    //group = Math.floor((Math.random() * 4) + 1);    // Elige grupo al azar: de 1 a 4.
+    var option = shuffle([1,2,3,4]);
+    group = option.shift();
+    asignagroup();                                  // Función que aplica cambios según el grupo.
     showInstruc();                                  // Mostrar instrucciones.
 }
 
-function asignaGroup() {
-    switch (Group) {
-        case 1: //RICO-Sin deudas
+function asignagroup() {
+    switch (group) {
+        case 1: //RICOS SIN PRÉSTAMOS
             disparosLeft = disparosRico;
             allowCredit = 0;
-            GroupName = "Rico-SinDeuda";
+            groupName = "Ricos sin préstamos";
             disparosDisponibles = disparosRico * rondas;
             break;
-        case 2: //POBRE-Sin deudas
+        case 2: //POBRES SIN PRESTAMOS
             disparosLeft = disparosPobre;
             allowCredit = 0;
-            GroupName = "Pobre-SinDeuda";
+            groupName = "Pobres sin préstamos";
             disparosDisponibles = disparosPobre * rondas;
             break;
-        case 3: //RICO-Con deudas
+        case 3: //RICOS CON PRÉSTAMOS
             disparosLeft = disparosRico;
             allowCredit = 1;
-            GroupName = "Rico-Deuda";
+            groupName = "Ricos con préstamos";
             disparosDisponibles = disparosRico * rondas;
-            prestamosTotales = Math.round(disparosDisponibles / 2);
+            prestamosTotales = roundDown(disparosDisponibles);
+            prestamosMaximos = 67;
             break;
-        case 4: //POBRE-Con deudas
+        case 4: //POBRES CON PRÉSTAMOS
             disparosLeft = disparosPobre;
             allowCredit = 1;
-            GroupName = "Pobre-Deuda";
+            groupName = "Pobres con préstamos";
             disparosDisponibles = disparosPobre * rondas;
-            prestamosTotales = Math.round(disparosDisponibles / 2);
+            prestamosTotales = roundDown(disparosDisponibles);
+            prestamosMaximos = 13;
     }
-
+    disparosTotales = (group === 1 || group === 3) ? disparosRico * rondas : disparosPobre * rondas;
     // cargarinstrucciones
     cargarinstrucciones(); 
 
@@ -252,22 +260,9 @@ function CheckBrowser() {
  * Función que válida los datos del formulario.
  */
 function checkForm() {
-    var age = document.getElementById('age').value;;
-    var gender = getCheckedValue(document.getElementsByName('gender'));
-    var message="";
-
-    if(age === null || age === "")
-        message = "Introduzca la edad por favor.";
-    else if(age < 18 )
-        message = "Debe tener al menos 18 años para participar en el experimento.";
-    if(gender === null || gender === "")
-        message = message.concat("Seleccione una opción para Género.");
-    if(message === "") {
-        Age = age;
-        Gender = gender;
-        pantalla1();
-    } else
-        alert(message);
+    age = document.getElementById('age').value;;
+    gender = getCheckedValue(document.getElementsByName('gender'));
+    pantalla1();
 }
 /**
  * Función que devuelve el valor seleccionado de los radio buttons.
@@ -374,7 +369,8 @@ function pantallaFinal(save) {
         saveData();
     ocultar(divTextos);
     pintarHTML("divTextos", instrucciones.PantallaFinal);
-    pintarHTML("divBoton","<button class='btnScreens' onclick='closeWindow();'>Salir</button>");
+    ocultar(divBoton);
+    //pintarHTML("divBoton","<button class='btnScreens' onclick='closeWindow();'>Salir</button>");
     mostrar(divTextos);
 }
 
@@ -411,6 +407,7 @@ function cambiaRonda() {
     ocultar(divTextos);
     ocultar(divBoton);
     ocultar(divContenidoJuego);
+    ocultar(divDisparosEndeudamiento);
 
     if (ronda == rondas || disparosDisponibles === 0) {
         finJuego();
@@ -427,21 +424,21 @@ function cambiaRonda() {
         puntosRonda = 0;            // resetea los puntos de la ronda.
         precioDisparo = 1;          //al iniciar la ronda, el precio es el normal.
         ronda++;                    //suma una ronda: si es la primera, pasa de 0 a 1.
-        switch (Group) {
+        switch (group) {
             case 1: //RICO-Sin deudas
-                disparosLeft = ronda === 1 ? disparosRico : disparosRico + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosRico : calcularDisparos(disparosRico +  disparosLeft);
                 break;
             case 2: //POBRE-Sin deudas
-                disparosLeft = ronda === 1 ? disparosPobre : disparosPobre + disparosLeft;
+                disparosLeft = ronda === 1 ? disparosPobre : calcularDisparos(disparosPobre + disparosLeft);
                 break;
             case 3: //RICO-Con deudas
-                disparosLeft = ronda === 1 ? disparosRico : (disparosDisponibles > disparosLeft && disparosDisponibles > disparosRico) ? disparosRico + disparosLeft : disparosDisponibles;
+                disparosLeft = ronda === 1 ? disparosRico : calcularDisparos(disparosRico +  disparosLeft);
                 break;
             case 4: //POBRE-Con deudas
-                disparosLeft = ronda === 1 ? disparosPobre : (disparosDisponibles > disparosLeft && disparosDisponibles > disparosPobre)? disparosPobre + disparosLeft : disparosDisponibles;
+                disparosLeft = ronda === 1 ? disparosPobre : calcularDisparos(disparosPobre + disparosLeft);
         }
-
-        pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
+        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
+        pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
         pintarHTML("divRondaScreen", "RONDA " + ronda);
         mostrar(divRondaScreen);
@@ -449,6 +446,10 @@ function cambiaRonda() {
         setTimeout("ocultar(divRondaScreen)", 3000);
         setTimeout("startTrial()", 3100);
     }
+}
+
+function calcularDisparos(disparos) {
+    return disparosDisponibles <= disparos ? disparosDisponibles : disparos;
 }
 
 //Esta función me devuelve la lista de tipos de ensayo, los números de respuesta de cada ensayo... para guardarlos
@@ -472,7 +473,7 @@ function toggleButtons() {
 
 }
 
-//comienza los ensayos:
+//comienza el ensayo:
 function startTrial() {
     ocultar(targetCandy);
     ocultar(explosionHit);
@@ -483,7 +484,10 @@ function startTrial() {
 
     pintarHTML("divRonda", "RONDA: " + ronda);
     pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
-    pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
+    if(precioDisparo == 2) {
+        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
+    }
+    pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
     button1 = document.getElementById("botonDispara");
     button2 = document.getElementById("botonOmitir");
@@ -497,7 +501,6 @@ function startTrial() {
     } else if (arrayTrials[state].name == "Movil") {
         target.classList.add("movil_idle");
     }
-
 
     button1.disabled = false;
     button2.disabled = false;
@@ -514,13 +517,11 @@ function shotTrial() {
     else
         disparosBlancosArriesgados++;
     
-    if(precioDisparo === 1) {
-        disparosLeft = disparosLeft - precioDisparo;    //te descuento un disparo.
-    } else { // precioDisparo = 2
-        prestamosSolicitados++;
-    }    
-
-    disparosDisponibles = disparosDisponibles - precioDisparo;
+    // Actualizar contadores de disparos y prestamos disponibles;
+    disparosLeft = precioDisparo === 1 ? disparosLeft -= 1 : disparosLeft;
+    disparosDisponibles -= precioDisparo;
+    prestamosTotales = allowCredit === 1 ? roundDown(disparosDisponibles) : prestamosTotales;
+    prestamosSolicitados = precioDisparo === 1 ? prestamosSolicitados : prestamosSolicitados += 1;
 
     var target = document.getElementById("targetCandy");
 
@@ -540,16 +541,12 @@ function shotTrial() {
         mostrar(pointsHit);
 
         puntosRonda++;          //sumamos los puntos y avanzamos el ensayo
-        PuntosTotal++;
+        puntosTotal++;
         state++;                //se incrementa el índice
 
         var puntos = document.getElementById("divPuntos");
         puntos.classList.add("UpdateStats");
         //setTimeout("puntos.classList.add('UpdateStats')", 500);
-
-        pintarHTML("divRonda", "RONDA: " + ronda);
-        pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
-        pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
 
         setTimeout('CheckParams()', 2000);
     } else { // Fallo
@@ -568,10 +565,6 @@ function skipTrial() {
     target.classList.add("classITI");
     ocultar(targetCandy);
 
-    pintarHTML("divRonda", "RONDA: " + ronda);
-    pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
-    pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"30px\">");
-
     seqResps2.push(arrayTrials[state].responses); // guardar el valor en el array
     roundTrialsData[ronda-1].push(arrayTrials[state]);
     state++; // incrementar el contador
@@ -580,6 +573,14 @@ function skipTrial() {
 }
 
 function CheckParams() {
+
+    pintarHTML("divRonda", "RONDA: " + ronda);
+    pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
+    pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
+
+    if(precioDisparo === 2) {
+        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">")
+    }
 
     // Actualizar marcadores.
     var puntos = document.getElementById("divPuntos");
@@ -594,18 +595,20 @@ function CheckParams() {
     button1.disabled = false;
     button2.disabled = false;
 
-    if(disparosDisponibles <= 0) { // Fin del juego. Mostrar pantalla fin ronda y fin juego.
+    if(disparosDisponibles <= 0 || (prestamosSolicitados == prestamosMaximos && allowCredit == 1)) { // Fin del juego. Mostrar pantalla fin ronda y fin juego.
         disparosDisponibles = 0;
+        checkPoints();
         contarTrials();
         decideTexto(0);
         //finJuego();
     } else if(state == arrayTrials.length) { // Se han acabado los ensayos. Mostrar pantalla fin ronda y fin juego si se se está en la última ronda.
+        checkPoints();
         contarTrials();
         decideTexto(0);
     } else if(puntosRonda === 7) { // Se han acertado con los siete objetivos. Mostrar pantalla fin ronda y fin juego si se se está en la última ronda. 
         // Se dan 3 puntos extra.
-        puntosRonda = 10;
-        PuntosTotal = PuntosTotal + 3;
+        puntosRonda += 3;
+        puntosTotal += 3;
         contarTrials();
         decideTexto(0);
     } else if (disparosLeft == 0 && precioDisparo === 1) { // No nos quedan más disparos.
@@ -621,12 +624,19 @@ function CheckParams() {
     }
 }
 
+function checkPoints() {
+    if(puntosRonda === 7) {
+        puntosRonda += 3;
+        puntosTotal += 3;
+    }
+}
+
 function finJuego() {
     ocultar(divContenidoJuego);
-    instrucciones.Final = "<h2>Puntuaciones finales</h2><p>Puntuación total juego: " + PuntosTotal + " puntos.</p><p>Ratio de acierto: " + Math.round(((PuntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 100) / 100 + "</p><p>Disparos sobrantes: " + disparosDisponibles + "</p>";
+    instrucciones.Final = "<h2>Puntuaciones finales</h2><p>Has llegado al final del juego.</p><p>Puntuación total juego: " + puntosTotal + " puntos.</p><p>Ratio de acierto: " + Math.round(((puntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 100) / 100 + "</p><p>Disparos sobrantes: " + disparosDisponibles + "</p>";
 
     pintarHTML("divTextos", instrucciones.Final);
-    pintarHTML("divBoton", "<button class='btnScreens' onclick='pantallaValoracion();'>Empezar</button>");
+    pintarHTML("divBoton", "<button class='btnScreens' onclick='pantallaValoracion();'>Continuar</button>");
 
     mostrar(divTextos);
     mostrar(divBoton);
@@ -634,11 +644,11 @@ function finJuego() {
 
 function decideTexto(value) {
     if(value === 0) { // caso en el que has conseguido los 7 objetivos o se han acabado los ensayos de la ronda o se te han agotado los disparos totales.
-        var htmltexto = "<h2>Tus resultados en la ronda" + ronda +"</h2><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p><p>Número de disparos acumulados para la siguiente ronda: " + disparosLeft + "</p> <button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=\"false\">Continuar</button>";
+        var htmltexto = "<h2>Tus resultados en la ronda " + ronda +"</h2><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + puntosTotal + "</b> puntos.</p><p>Número de disparos acumulados para la siguiente ronda: " + disparosLeft + "</p> <button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=\"false\">Continuar</button>";
         pintarHTML("divNoDisparos", htmltexto);
         document.getElementById("botonSiguienteRonda").disabled = false;
     } else { // caso en el que se te han acabado los disparos de la ronda y puedes endeudarte.
-        var htmltexto = "<h2>ATENCIÓN</h2><p>No te quedan más disparos.</p><img src=\"img/noShotsLeft.png\" width=\"120px\"><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + PuntosTotal + "</b> puntos.</p> <p>Tienes la posibilidad de <b>pedir un crédito</b> para seguir jugando esta ronda. Si pides el crédito, tendrás más posibilidades de disparar, pero cada disparo que hagas te descontará dos balas.</p><div class = \"column2\"><button id=\"botonEndeudarse\" class=\"buttonDeudas\" onclick=\"deuda()\"  disabled=false>Endeudarme</button></div><div class = \"column2\"><button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=false>No endeudarme</button></div>";
+        var htmltexto = "<h2>ATENCIÓN</h2><p>No te quedan más disparos.</p><img src=\"img/noShotsLeft.png\" width=\"120px\"><p>Tu puntuación en esta ronda es de: <b>" + puntosRonda + "</b> puntos.</p><p>Tu puntuación total es de: <b>" + puntosTotal + "</b> puntos.</p> <p>Tienes la posibilidad de <b>pedir un crédito</b> para seguir jugando esta ronda. Si pides el crédito, tendrás más posibilidades de disparar, pero cada disparo que hagas te descontará dos balas.</p><div class = \"column2\"><button id=\"botonEndeudarse\" class=\"buttonDeudas\" onclick=\"deuda()\"  disabled=false>Endeudarme</button></div><div class = \"column2\"><button id=\"botonSiguienteRonda\" class=\"buttonDeudas\" onclick=\"siguienteRonda()\"  disabled=false>No endeudarme</button></div>";
         pintarHTML("divNoDisparos", htmltexto);
         document.getElementById("botonEndeudarse").disabled = false;
         document.getElementById("botonSiguienteRonda").disabled = false;
@@ -654,20 +664,24 @@ function deuda() {
 
     precioDisparo = 2;
 
-    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición. Actualmente dispones de " + Math.round(disparosDisponibles / 2) + "</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
+    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición. Actualmente dispones de " + prestamosTotales + "</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
 
-    setTimeout("pintarHTML('divNoDisparos', '')", 500);
+    //setTimeout("pintarHTML('divNoDisparos', '')", 500);
     setTimeout("pintarHTML('divNoDisparos', htmlContenido)", 1000);
 
 }
 
 
 function sigueRonda() {
+    if(allowCredit === 1)
+        mostrar(divDisparosEndeudamiento);
     ocultar(divNoDisparos);
     startTrial();
 }
 
 function siguienteRonda() {
+    if(allowCredit === 1)
+        ocultar(divDisparosEndeudamiento);
     ocultar(divNoDisparos);
     cambiaRonda();
 }
@@ -678,34 +692,35 @@ function siguienteRonda() {
 
 
 function saveData() {
-
-    //data = experimentCode + "," + personId + "," + Fecha + "," + Age + "," + Gender + "," + GroupName + ",";
     data = {
-        "Grupo" : Group,
-        "Escasez" : (Group == 1 || Group == 3) ? "No" : "Sí",
+        "Grupo" : group,
+        "Escasez" : (group == 1 || group == 3) ? "No" : "Sí",
         "Prestamos" : (allowCredit == 0) ? "No" : "Sí",
-        "NumDisparosDisponible" : disparosDisponibles,
-        "Fecha" : Fecha,
-        "Genero" : Gender,
-        "Edad" : Age,
+        "NumDisparosDisponible" : disparosTotales,
+        "Fecha" : fecha,
+        "HoraInicio" : horaInicio,
+        "HoraFin" : stringTime(),
+        "Genero" : gender,
+        "Edad" : age,
         "IdParticipante" : personId,
-        "NumTotalPuntos" : PuntosTotal,
+        "NumTotalPuntos" : puntosTotal,
         "NumTotalDisparosBlancosSeguros" : disparosBlancosSeguros,
         "NumTotalDisparosBlancosArriesgados" : disparosBlancosArriesgados,
         "NumTotalPrestamosSolicitados" : prestamosSolicitados,
         "EstrategiaAhorro" : roundWithoutShots(),
         "ValoracionRecurso" : sliderValue,
         "NumTotalDisparosRealizados" : disparosBlancosArriesgados + disparosBlancosSeguros,
-        "RatioPuntuación" : (Group == 1 || Group == 3) ? (PuntosTotal/100) : (PuntosTotal/42),
-        "RatioAcierto" : Math.round(((PuntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 100) / 100,
-        "EstrategiaRatioSeguridad" : Math.round(((disparosBlancosSeguros/(disparosBlancosArriesgados+disparosBlancosSeguros)) + Number.EPSILON) * 100) /100,
-        "RatioEndeudamiento" : Math.round(((prestamosSolicitados / prestamosTotales) + Number.EPSILON) * 100) /100
+        "RatioPuntuación" : (group == 1 || group == 3) ? Math.round(((puntosTotal/100) + Number.EPSILON) * 1000) / 1000 : Math.round(((puntosTotal/42) + Number.EPSILON) * 1000) / 1000,
+        "RatioAcierto" : Math.round(((puntosTotal/(disparosBlancosArriesgados + disparosBlancosSeguros)) + Number.EPSILON) * 1000) / 1000,
+        "EstrategiaRatioSeguridad" : Math.round(((disparosBlancosSeguros/(disparosBlancosArriesgados+disparosBlancosSeguros)) + Number.EPSILON) * 1000) /1000,
+        "RatioEndeudamiento" : (group == 1 || group == 2) ? 0 : Number.isNaN(Math.round(((prestamosSolicitados / prestamosMaximos) + Number.EPSILON) * 1000) /1000) ? 0 : Math.round(((prestamosSolicitados / prestamosMaximos) + Number.EPSILON) * 1000) /1000
     };
-    dataToSend = experimentCode + "," + data.Grupo + "," + data.Escasez + "," + data.Prestamos + "," + data.NumDisparosDisponible + "," + data.Fecha + "," + data.Genero + "," + data.Edad +
+    dataToSend = experimentCode + "," + data.Grupo + "," + data.Escasez + "," + data.Prestamos + "," + data.NumDisparosDisponible + "," + data.Fecha + "," + data.HoraInicio + "," + data.HoraFin + "," + data.Genero + "," + data.Edad +
                 "," + data.IdParticipante + "," + data.NumTotalPuntos + "," + data.NumTotalDisparosBlancosSeguros + "," + data.NumTotalDisparosBlancosArriesgados + "," + data.NumTotalPrestamosSolicitados +
                 "," + data.EstrategiaAhorro + "," + data.ValoracionRecurso + "," + data.NumTotalDisparosRealizados + "," + data.RatioPuntuación + "," + data.RatioAcierto + "," + data.EstrategiaRatioSeguridad +
                 "," + data.RatioEndeudamiento;
-    alert(JSON.stringify(data)); // Comentar la siguiente línea, ahora es para mostrar los datos de las pruebas.
+    //alert(JSON.stringify(data)); // Comentar la siguiente línea, ahora es para mostrar los datos de las pruebas.
+    //alert(dataToSend);
     sendFirebase(dataToSend);
 }
 
@@ -725,7 +740,7 @@ function sendFirebase(data) {
   
     // Get a reference to the database service
     var database = firebase.database();
-    var referencia=database.ref('x138a');
+    var referencia=database.ref(experimentCode);
   
     referencia.push(
     {
@@ -745,4 +760,9 @@ function roundWithoutShots() {
         if(shots === 0) roundWithoutShots++;
     }
     return roundWithoutShots;
+}
+
+// Función que redondea a la baja el 0.5.
+function roundDown(value) {
+    return (value / 2) % 1 === 0.5 ? value / 2 - 0.5 : Math.round(value / 2);
 }
