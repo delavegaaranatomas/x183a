@@ -49,9 +49,9 @@ margin-left:10%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
 	text-align: center;	
-	height:640px;
+	height:720px;
 	width: 950px;
-	border-radius: 2%;
+	border-radius: 1%;
 	
 }
 
@@ -64,10 +64,10 @@ margin-left:10%;
     top: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-	border-radius: 2%;
+	border-radius: 0%;
 	text-align: center;	
-	height:95%;
-	width: 97%;
+	height:99%;
+	width: 99%;
 }
 
 #divTitle{
@@ -159,7 +159,7 @@ margin-left:10%;
 }
 
 .column {
-    width: 33.3333%;
+    width: 25%;
     height: 100%;
     float: left;
 }
@@ -178,8 +178,8 @@ margin-left:10%;
     padding: 5%;
     font-size: 1em;
     line-height: 1.2em;
-    height:500px;
-	width: 800px;
+    height:630px;
+	  width: 900px;
     z-index: 10;
 	position: absolute;
     left: 50%;
