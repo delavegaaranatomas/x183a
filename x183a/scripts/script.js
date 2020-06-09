@@ -184,7 +184,7 @@ function cargarinstrucciones() {
 //++++++++++++++++++++++++++++++++
 
 function arranca() {
-
+    alert("Pulsa F11 para verme a pantalla completa");
     TimeInicioTarea = Date.now();
     preloadIMG();
     //group = Math.floor((Math.random() * 4) + 1);    // Elige grupo al azar: de 1 a 4.
@@ -192,6 +192,7 @@ function arranca() {
     group = option.shift();
     asignagroup();                                  // Función que aplica cambios según el grupo.
     showInstruc();                                  // Mostrar instrucciones.
+
 }
 
 function asignagroup() {
@@ -300,7 +301,6 @@ function showInstruc() {
     consentimiento();
 }
 
-
 function consentimiento() {
     pintarHTML("divTextos", instrucciones.Consentimiento);
     pintarHTML("divBoton", "<button class='btnScreens' onclick='sociodemografProlific()'>Empezar</button>");
@@ -370,8 +370,9 @@ function pantallaFinal(save) {
     ocultar(divTextos);
     pintarHTML("divTextos", instrucciones.PantallaFinal);
     ocultar(divBoton);
-    //pintarHTML("divBoton","<button class='btnScreens' onclick='closeWindow();'>Salir</button>");
+    pintarHTML("divBoton","<button class='btnScreens' onclick='closeWindow();'>Salir</button>");
     mostrar(divTextos);
+    mostrar(divBoton);
 }
 
 /**
@@ -437,7 +438,7 @@ function cambiaRonda() {
             case 4: //POBRE-Con deudas
                 disparosLeft = ronda === 1 ? disparosPobre : calcularDisparos(disparosPobre + disparosLeft);
         }
-        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
+        pintarHTML("divDisparosEndeudamiento","x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
         pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
         pintarHTML("divRondaScreen", "RONDA " + ronda);
@@ -485,9 +486,11 @@ function startTrial() {
     pintarHTML("divRonda", "RONDA: " + ronda);
     pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
     if(precioDisparo == 2) {
-        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
+        pintarHTML("divDisparos", disparosDisponibles + "x <img src=\"img/Disparo.png\" width=\"20px\">");
+        pintarHTML("divDisparosEndeudamiento", "<img src=\"img/deudaPrecio.png\" width=\"40px\">");
+    } else {
+        pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
     }
-    pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
     button1 = document.getElementById("botonDispara");
     button2 = document.getElementById("botonOmitir");
@@ -579,7 +582,7 @@ function CheckParams() {
     pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
     if(precioDisparo === 2) {
-        pintarHTML("divDisparosEndeudamiento", prestamosTotales + "x <img src=\"img/deudaPrecio.png\" width=\"40px\">")
+        pintarHTML("divDisparosEndeudamiento", "x <img src=\"img/deudaPrecio.png\" width=\"40px\">")
     }
 
     // Actualizar marcadores.
@@ -664,7 +667,7 @@ function deuda() {
 
     precioDisparo = 2;
 
-    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición. Actualmente dispones de " + prestamosTotales + "</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
+    htmlContenido = "<h2>CRÉDITO ADJUDICADO</h2><p>A partir de este momento, cada disparo te cuesta DOS unidades de munición.<br>Actualmente dispones de " + disparosDisponibles + "</p><img src=\"img/deudaPrecio.png\" height=\"120px\"> <p>Puedes continuar la ronda.</p><button id=\"botonContinua\" class=\"buttonDeudas\" onclick=\'sigueRonda()'>Continuar</button>";
 
     //setTimeout("pintarHTML('divNoDisparos', '')", 500);
     setTimeout("pintarHTML('divNoDisparos', htmlContenido)", 1000);
