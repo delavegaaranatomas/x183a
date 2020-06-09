@@ -438,7 +438,7 @@ function cambiaRonda() {
             case 4: //POBRE-Con deudas
                 disparosLeft = ronda === 1 ? disparosPobre : calcularDisparos(disparosPobre + disparosLeft);
         }
-        pintarHTML("divDisparosEndeudamiento","x <img src=\"img/deudaPrecio.png\" width=\"40px\">");
+        pintarHTML("divDisparosEndeudamiento","x <img src=\"img/deudaPrecio.png\" width=\"60px\">");
         pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
         pintarHTML("divRondaScreen", "RONDA " + ronda);
@@ -487,7 +487,7 @@ function startTrial() {
     pintarHTML("divPuntos", "Puntos total: " + puntosRonda);
     if(precioDisparo == 2) {
         pintarHTML("divDisparos", disparosDisponibles + "x <img src=\"img/Disparo.png\" width=\"20px\">");
-        pintarHTML("divDisparosEndeudamiento", "<img src=\"img/deudaPrecio.png\" width=\"40px\">");
+        pintarHTML("divDisparosEndeudamiento", "<img src=\"img/deudaPrecio.png\" width=\"60px\">");
     } else {
         pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
     }
@@ -582,7 +582,7 @@ function CheckParams() {
     pintarHTML("divDisparos", disparosLeft + "x <img src=\"img/Disparo.png\" width=\"20px\">");
 
     if(precioDisparo === 2) {
-        pintarHTML("divDisparosEndeudamiento", "x <img src=\"img/deudaPrecio.png\" width=\"40px\">")
+        pintarHTML("divDisparosEndeudamiento", "x <img src=\"img/deudaPrecio.png\" width=\"60px\">")
     }
 
     // Actualizar marcadores.
